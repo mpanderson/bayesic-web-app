@@ -1,0 +1,141 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title>Monty Hall Paradox</title>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <!-- Include Bootstrap CSS for table styling -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
+    img{border:solid 1px red; margin:10px;}
+    .selected{
+        box-shadow:0px 12px 22px 1px #333;
+    }
+  </style>
+</head>
+<body>
+   <div class="jumbotron">
+      <h1>Monty Hall Paradox Simulation</h1>
+   </div>
+   <!-- Interactive Game -->
+   <div>
+      <h2>Interactive Game</h2>
+      <form method="POST">
+         <label for="doors">Number of Doors:</label>
+         <input type="number" name="doors" required>
+         <br>
+         <input type="submit" value="Create Game" class="btn btn-primary btn-lg">
+      </form>
+      <!-- Display doors, prize, and goat images here -->
+    
+     
+     <div class="door-container">
+         {% if doors %}
+             {% for i in range(doors) %}
+                 <img src="{{ url_for('static', filename='images/door.png') }}" alt="Door" class="door" data-door-number="{{ i + 1 }}">
+             {% endfor %}
+         {% endif %}
+     </div>
+
+     <div id="selected-door-info">
+         <!-- This is where the user-selected door will be displayed -->
+     </div>
+
+     <!-- "Host Reveal" button -->
+     <button id="host-reveal-button">Host Reveal</button>
+
+     <!-- "Prize Reveal" button -->
+     <button id="prize-reveal-button">Prize Reveal</button>
+
+     <!-- ... -->
+     <script>
+         const winningDoor = {{ win_door }};
+         let userSelectedDoor; // Initialize userSelectedDoor
+         let hostRevealed = false; // Initialize hostRevealed
+         let availableDoors = []; // Initialize the array to keep track of available doors
+
+         // Function to reveal goats behind doors
+         function revealGoats() {
+             $('img.door').each(function () {
+                 const doorNumber = $(this).data('door-number');
+                 if (doorNumber !== userSelectedDoor && doorNumber !== winningDoor) {
+                     // Replace non-selected doors with the "goat.png" image
+                     $(this).attr('src', '{{ url_for('static', filename='images/goat2.png') }}');
+                 }
+             });
+         }
+
+         // Function to reveal the prize behind the winning door
+         function revealPrize() {
+             // Change the image source of the winning door to the prize image
+             $(`img[data-door-number="${winningDoor}"]`).attr('src', '{{ url_for('static', filename='images/prize.png') }}');
+         }
+
+         // Initial state: Display all doors
+         $('img.door').each(function () {
+             $(this).attr('src', '{{ url_for('static', filename='images/door.png') }}');
+             availableDoors.push($(this).data('door-number'));
+         });
+
+         // Handle user's click on a door
+         $('img.door').click(function () {
+             if ($(this).hasClass('selected')) {
+                 // If the user clicks the selected door again, do nothing
+                 return;
+             }
+
+             // Remove 'selected' class from all doors
+             $('img.door').removeClass('selected');
+             // Add 'selected' class to the clicked door
+             $(this).addClass('selected');
+
+             // Retrieve the user-selected door number from the data attribute
+             userSelectedDoor = $(this).data('door-number');
+             $('#selected-door-info').html('User selected door: ' + userSelectedDoor);
+
+             if (hostRevealed) {
+                 // If Host Reveal has been clicked, reveal goats behind non-selected doors
+                 revealGoats();
+             }
+         });
+
+         // Handle Host Reveal button click
+         $('#host-reveal-button').click(function () {
+             if (!hostRevealed) {
+                 hostRevealed = true;
+
+                 // Randomly choose one door to remain as a door
+                 const remainingDoors = availableDoors.filter(door => door !== userSelectedDoor && door !== winningDoor);
+                 const randomRemainingDoor = remainingDoors[Math.floor(Math.random() * remainingDoors.length)];
+
+                 // Open all other non-selected doors, revealing goats behind them
+                 availableDoors.forEach(doorNumber => {
+                     if (doorNumber !== userSelectedDoor && doorNumber !== winningDoor && doorNumber !== randomRemainingDoor) {
+                         // Replace non-selected doors with the "goat.png" image
+                         $(`img[data-door-number="${doorNumber}"]`).attr('src', '{{ url_for('static', filename='images/goat2.png') }}');
+                     }
+                 });
+             }
+         });
+
+         // Handle Prize Reveal button click
+         $('#prize-reveal-button').click(function () {
+             if (hostRevealed) {
+                 // If Host Reveal has been clicked, reveal the prize behind the winning door
+                 revealPrize();
+             }
+         });
+     </script>
+     <!-- ... -->
+
+
+
+   </div>
+   <div>
+      {{win_door}}
+      {{doors}}
+   </div>
+ 
+</body>
+</html>
