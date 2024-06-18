@@ -10,5 +10,5 @@ channel = "stable-23_05"
 language = "python3"
 
 [deployment]
-run = ["sh", "-c", "python monte.py"]
+run = ["sh", "-c", "python app.py"]
 deploymentTarget = "cloudrun"
