@@ -35,15 +35,14 @@ def reveal_goat():
 @app.route('/simulate', methods=['POST'])
 def simulate():
     data = request.json
-    num_doors = data['num_doors']
-    num_simulations = data['num_simulations']
+    num_doors = int(data['num_doors'])
+    num_simulations = int(data['num_simulations'])
     stay_wins = 0
     switch_wins = 0
 
     for _ in range(num_simulations):
         winner = random.randint(0, num_doors - 1)
         chosen_door = random.randint(0, num_doors - 1)
-
         if chosen_door == winner:
             stay_wins += 1
         else:
@@ -52,12 +51,8 @@ def simulate():
     stay_percentage = (stay_wins / num_simulations) * 100
     switch_percentage = (switch_wins / num_simulations) * 100
 
-    return jsonify({
-        'stay_percentage': stay_percentage,
-        'switch_percentage': switch_percentage,
-        'stay_wins': stay_wins,
-        'switch_wins': switch_wins
-    })
+    return jsonify({'stay_percentage': stay_percentage, 'switch_percentage': switch_percentage})
+
     
 if __name__ == '__main__':
     app.run(debug=True)
