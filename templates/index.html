@@ -109,7 +109,7 @@
                     </form>
                 </div>
                  <div id="simulationResults"></div>
-                <canvas id="simulationChart" width="400" height="200"></canvas>
+                <canvas id="simulationChart" width="200" height="100"></canvas>
             </div>
         </div>
     </div>
@@ -204,6 +204,8 @@
                 }
             }
 
+            let simulationChart = null;
+
             document.getElementById('simulation-form').addEventListener('submit', function(event) {
                 event.preventDefault();
                 const numDoors = document.getElementById('sim_num_doors').value;
@@ -223,7 +225,13 @@
                         <p>Switch Win Percentage: ${data.switch_percentage.toFixed(2)}%</p>
                     `;
 
-                    new Chart(ctx, {
+                    // Destroy the existing chart if it exists
+                    if (simulationChart) {
+                        simulationChart.destroy();
+                    }
+
+                    // Create a new chart
+                    simulationChart = new Chart(ctx, {
                         type: 'line',
                         data: {
                             labels: Array.from({ length: numSimulations }, (_, i) => i + 1),
