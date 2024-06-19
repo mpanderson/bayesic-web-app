@@ -230,13 +230,13 @@
                             datasets: [
                                 {
                                     label: 'Stay Win Percentage',
-                                    data: Array(numSimulations).fill(data.stay_percentage),
+                                    data: data.stay_percentages,
                                     borderColor: 'blue',
                                     fill: false
                                 },
                                 {
                                     label: 'Switch Win Percentage',
-                                    data: Array(numSimulations).fill(data.switch_percentage),
+                                    data: data.switch_percentages,
                                     borderColor: 'red',
                                     fill: false
                                 }
@@ -253,6 +253,7 @@
                     });
                 });
             });
+
         });
     </script>
 </body>

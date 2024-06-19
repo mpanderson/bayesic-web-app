@@ -40,7 +40,10 @@ def simulate():
     stay_wins = 0
     switch_wins = 0
 
-    for _ in range(num_simulations):
+    stay_percentages = []
+    switch_percentages = []
+
+    for i in range(num_simulations):
         winner = random.randint(0, num_doors - 1)
         chosen_door = random.randint(0, num_doors - 1)
         if chosen_door == winner:
@@ -48,10 +51,18 @@ def simulate():
         else:
             switch_wins += 1
 
+        stay_percentages.append((stay_wins / (i + 1)) * 100)
+        switch_percentages.append((switch_wins / (i + 1)) * 100)
+
     stay_percentage = (stay_wins / num_simulations) * 100
     switch_percentage = (switch_wins / num_simulations) * 100
 
-    return jsonify({'stay_percentage': stay_percentage, 'switch_percentage': switch_percentage})
+    return jsonify({
+        'stay_percentage': stay_percentage, 
+        'switch_percentage': switch_percentage,
+        'stay_percentages': stay_percentages,
+        'switch_percentages': switch_percentages
+    })
 
     
 if __name__ == '__main__':
